@@ -1,0 +1,56 @@
+# Kerne Protocol
+
+Delta-neutral synthetic dollar on Base. USDC mints **kUSD** through the [PSM](https://app.kerne.fi/api/psm-status); the collateral is hedged with a short perpetual position on Hyperliquid so the dollar holds its peg while the funding spread plus staking yield accrues. Stake kUSD into **skUSD** to receive that yield. Live APY is computed from the trailing Hyperliquid funding mean plus the Lido staking SMA, with explicit deductions for strategy cost, dynamic insurance allocation, and protocol phase fee. Genesis phase: 0% performance fee while TVL is below $100k.
+
+Every number Kerne publishes about itself is reproducible from public RPCs and public endpoints, with no Kerne-controlled infrastructure in the trust path. See [Verify Kerne yourself](#verify-kerne-yourself).
+
+**Disambiguation:** Kerne kUSD on Base is a different protocol from KernelDAO's KUSD on BNB Chain. Different teams, different chains. See [kerne.fi/not-kerneldao](https://kerne.fi/not-kerneldao).
+
+## Live surface
+
+| What | Where |
+|---|---|
+| Marketing site | [kerne.fi](https://kerne.fi) |
+| Terminal / dApp | [app.kerne.fi](https://app.kerne.fi) |
+| Docs | [kerne.fi/docs](https://kerne.fi/docs) |
+| Live APY (with methodology) | [kerne.fi/api/apy](https://kerne.fi/api/apy) |
+| Proof of Reserves | [kerne.fi/api/por](https://kerne.fi/api/por) |
+| Risk triggers / exit policy | [kerne.fi/api/risk-status](https://kerne.fi/api/risk-status) |
+| PSM mint readiness | [app.kerne.fi/api/psm-status](https://app.kerne.fi/api/psm-status) |
+| Bug bounty | [kerne.fi/security](https://kerne.fi/security) |
+| security.txt (RFC 9116) | [kerne.fi/.well-known/security.txt](https://kerne.fi/.well-known/security.txt) |
+
+## Contracts on Base (chain 8453)
+
+| Contract | Address |
+|---|---|
+| kUSD (synthetic dollar) | [`0x5C2EfdF0D8D286959b42308966bc2B97f5680AA3`](https://basescan.org/address/0x5C2EfdF0D8D286959b42308966bc2B97f5680AA3) |
+| skUSD (staked kUSD, ERC-4626) | [`0xdEd74F7E06efc76455C07418b8b74Cc2bc009DB4`](https://basescan.org/address/0xdEd74F7E06efc76455C07418b8b74Cc2bc009DB4) |
+| KUSDPSM (USDC swap) | [`0xFf3025ec18e301855aB0f36Ec6ECa115a29A5Fbc`](https://basescan.org/address/0xFf3025ec18e301855aB0f36Ec6ECa115a29A5Fbc) |
+| KerneVault (ERC-4626) | [`0x8005bc7A86AD904C20fd62788ABED7546c1cF2AC`](https://basescan.org/address/0x8005bc7A86AD904C20fd62788ABED7546c1cF2AC) |
+| KERNE (governance, canonical v2) | [`0x230f3a63E8413D42bEe9103b98a204030206186c`](https://basescan.org/address/0x230f3a63E8413D42bEe9103b98a204030206186c) |
+| 2-of-3 Safe (protocol admin) | [`0x52d3E450bA6c299B1B07298F1E87DD74732D4877`](https://basescan.org/address/0x52d3E450bA6c299B1B07298F1E87DD74732D4877) |
+
+The full address registry is in [`contracts-public/deployments/8453.json`](https://github.com/kerne-protocol/contracts-public/blob/main/deployments/8453.json). The original KERNE deployment (`0xfEA3D217...`) was retired and superseded by the canonical v2 above; see [kerne.fi/security](https://kerne.fi/security) for the disclosure.
+
+## Verify Kerne yourself
+
+A single command checks every public claim Kerne makes about its own state, against live RPCs and live HTTPS endpoints, with no authentication:
+
+```bash
+curl -sL https://raw.githubusercontent.com/kerne-protocol/contracts-public/main/scripts/verify_public_endpoints.sh | bash
+```
+
+Prefer not to pipe the internet to bash? Read the script first, or follow the full hostile-reader walkthrough (every claim cross-checked with `cast call`) in [`contracts-public/HOW_TO_VERIFY_KERNE.md`](https://github.com/kerne-protocol/contracts-public/blob/main/HOW_TO_VERIFY_KERNE.md).
+
+## Audit posture
+
+- **Internal:** an extensive Foundry test suite (900+ Solidity tests) plus Python (bot) and TypeScript (SDK) suites, and a drift-guard CI job that asserts every numeric threshold cited in the docs matches the live constant in code.
+- **External:** pre-audit. No published external audit yet; an audit-firm engagement is underway. The public bug bounty is live at [kerne.fi/security](https://kerne.fi/security). Reports land in [`contracts-public/audits/`](https://github.com/kerne-protocol/contracts-public/tree/main/audits) as they arrive.
+- **Verification:** the deployed contracts are source-verified on BaseScan (several with Sourcify perfect-match). A full forge-testable source mirror lands in `contracts-public` at the next contract redeploy, when source and deployed bytecode are realigned.
+
+## Community
+
+- X / Twitter: [@KerneProtocol](https://x.com/KerneProtocol)
+- Discord: [discord.gg/Xx8TSuWrCA](https://discord.gg/Xx8TSuWrCA)
+- Security disclosure: kerne.systems@protonmail.com (PGP key in security.txt)
