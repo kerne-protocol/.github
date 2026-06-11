@@ -46,8 +46,8 @@ Prefer not to pipe the internet to bash? Read the script first, or follow the fu
 ## Audit posture
 
 - **Internal:** an extensive Foundry test suite (900+ Solidity tests) plus Python (bot) and TypeScript (SDK) suites, and a drift-guard CI job that asserts every numeric threshold cited in the docs matches the live constant in code.
-- **External:** pre-audit. No published external audit yet; an audit-firm engagement is underway. The public bug bounty is live at [kerne.fi/security](https://kerne.fi/security). Reports land in [`contracts-public/audits/`](https://github.com/kerne-protocol/contracts-public/tree/main/audits) as they arrive.
-- **Verification:** the deployed contracts are source-verified on BaseScan (several with Sourcify perfect-match). A full forge-testable source mirror lands in `contracts-public` at the next contract redeploy, when source and deployed bytecode are realigned.
+- **External:** pre-audit. No external audit has been published and no audit firm is engaged yet; an engagement is planned before the public vault launch. The public bug bounty is live at [kerne.fi/security](https://kerne.fi/security), and internal adversarial audit reports are published at [kerne.fi/security/audits](https://kerne.fi/security/audits). External reports land in [`contracts-public/audits/`](https://github.com/kerne-protocol/contracts-public/tree/main/audits) as they arrive.
+- **Verification:** 11 of the 13 registry contracts are source-verified on BaseScan and/or Sourcify; the two exceptions (KerneStaking, KerneFlashArbBot) are disclosed per-contract in the [contracts-public status table](https://github.com/kerne-protocol/contracts-public#where-the-contract-source-is). A full forge-testable source mirror lands in `contracts-public` at the next contract redeploy, when source and deployed bytecode are realigned.
 
 ## Community
 
