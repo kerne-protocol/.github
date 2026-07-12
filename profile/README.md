@@ -19,6 +19,7 @@ Every number Kerne publishes about itself is reproducible from public RPCs and p
 | PSM mint readiness | [app.kerne.fi/api/psm-status](https://app.kerne.fi/api/psm-status) |
 | Bug bounty | [kerne.fi/security](https://kerne.fi/security) |
 | security.txt (RFC 9116) | [kerne.fi/.well-known/security.txt](https://kerne.fi/.well-known/security.txt) |
+| OP Atlas project registry | https://atlas.optimism.io/project/0x8f7746724eb8314f2fcbeb9367dabc25dd159cb1dddecac5f7d61bc67a708113 |
 
 ## Contracts on Base (chain 8453)
 
