@@ -65,7 +65,7 @@ Prefer not to pipe the internet to bash? Read the script first, or follow the fu
 
 ## How Kerne is built
 
-Kerne is built by three co-founders, and most of the code is written with AI under our direction. The commit trailers record it. We are stating it here because a fact like this should come from us rather than turn up later as something a reader discovered on their own.
+Kerne is built by three co-founders, and most of the code is written with AI under our direction. Commit trailers record part of that history rather than all of it: 14 of the 82 commits across Kerne's public repositories carry a co-authorship trailer (measured 2026-08-13). The convention started partway through and nothing enforces it, so read the trailers as a sample rather than a census. We are stating it here because a fact like this should come from us rather than turn up later as something a reader discovered on their own.
 
 Code written this way earns more outside scrutiny, not less, and that is the reason the rest of this page looks the way it does. The contracts went to Hexens for a paid external audit on the terms and with the limits set out above. A public bug bounty runs at [kerne.fi/security](https://kerne.fi/security), hosted by us rather than on a third-party platform. Reserves are signed hourly, risk triggers are published as a live feed, every contract has a verification status you can check against BaseScan and Sourcify yourself, and every place the deployed bytecode differs from its source is written down. All of that reads off public RPCs and public endpoints, so none of it asks you to take a view on who or what wrote the code.
 
