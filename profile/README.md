@@ -48,6 +48,22 @@ curl -sL https://raw.githubusercontent.com/kerne-protocol/contracts-public/main/
 
 Prefer not to pipe the internet to bash? Read the script first, or follow the full hostile-reader walkthrough (every claim cross-checked with `cast call`) in [`contracts-public/HOW_TO_VERIFY_KERNE.md`](https://github.com/kerne-protocol/contracts-public/blob/main/HOW_TO_VERIFY_KERNE.md).
 
+## Measurement tools anyone can run
+
+Three standalone repositories. No dependencies, no API key, no account anywhere. They measure the rest of the category rather than only Kerne, and the board the first one checks lists Kerne's own row first by rule and states its own gap in full, whatever that gap is on the day. That is the reason to hand you the tool rather than the summary.
+
+| Repository | What it does |
+|---|---|
+| [**realized-apy**](https://github.com/kerne-protocol/realized-apy) | Re-derives every row of the [Kerne Honesty Index](https://kerne.fi/honesty-index) from public archive RPC, at the block heights the signed snapshot names, and tells you row by row whether the published number holds. It is a **second implementation**: it shares no code with the engine that writes the board, and it verifies the snapshot signature with keccak256 and secp256k1 written from scratch rather than with a library. It also measures any ERC-4626 dollar vault Kerne has never heard of. Method, tolerances and the standing commitment if you get a different answer: [kerne.fi/honesty-index/reproduce](https://kerne.fi/honesty-index/reproduce). |
+| [**solhonesty**](https://github.com/kerne-protocol/solhonesty) | The same question asked on Solana, across Kamino, Jupiter Lend and Save, published as a [CC BY 4.0 dataset](https://huggingface.co/datasets/kerne-protocol/honesty-index) and rendered at [kerne.fi/solana-honesty](https://kerne.fi/solana-honesty). Kerne is deliberately **absent** from that board, because the board is Solana and Kerne is on Base, so any Kerne row there would be invented. |
+| [**signed-por**](https://github.com/kerne-protocol/signed-por) | A vendor-neutral verifier for Signed Proof-of-Reserves attestations: EIP-191 recovery, canonical number binding, freshness with a future-skew bound. Kerne is reference deployment number one rather than the subject, and the [spec](https://github.com/kerne-protocol/signed-por/blob/main/SPEC.md) is written so anyone else can be number two. |
+
+```bash
+npx -y github:kerne-protocol/realized-apy check
+```
+
+Every protocol on the Honesty Index, including the ones the board is least flattering about, has a free, permanent and unedited [right of reply](https://kerne.fi/honesty-index/reproduce#right-of-reply) on its own row. Nothing is charged for it and no commercial conversation is a condition of it.
+
 ## Audit posture
 
 - **Tests you can run:** 78 tests across 15 suites in [`contracts-public`](https://github.com/kerne-protocol/contracts-public) (measured 2026-08-14), green from a clean clone in two commands, with no RPC endpoint, API key or environment file, and [run in CI on every push](https://github.com/kerne-protocol/contracts-public/actions). Eight of those suites name the outside researcher who reported the finding they lock down.
