@@ -62,6 +62,8 @@ Three standalone repositories. No dependencies, no API key, no account anywhere.
 npx -y github:kerne-protocol/realized-apy check
 ```
 
+The same board is reachable by an agent, at `https://kerne.fi/api/mcp`. Remote Model Context Protocol server over Streamable HTTP, no key and no account, listed in the official registry as `io.github.kerne-protocol/honesty-index`. It hands back the two block-pinned `eth_call` payloads behind a figure rather than only the figure, so a caller can disagree with it instead of trusting it. Source and probe: [honesty-index-mcp](https://github.com/kerne-protocol/honesty-index-mcp).
+
 Every protocol on the Honesty Index, including the ones the board is least flattering about, has a free, permanent and unedited [right of reply](https://kerne.fi/honesty-index/reproduce#right-of-reply) on its own row. Nothing is charged for it and no commercial conversation is a condition of it.
 
 ## Audit posture
