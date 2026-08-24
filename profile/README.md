@@ -2,7 +2,7 @@
 
 Delta-neutral synthetic dollar on Base. USDC mints **kUSD** through the [PSM](https://app.kerne.fi/api/psm-status), and every kUSD is backed 1:1 by USDC reserves anyone can recompute from chain; backing is [live and verifiable](https://kerne.fi/api/por) and sits near 100% today. The design pairs the collateral with a short perpetual hedge on Hyperliquid; that hedge engine is built and wired, but no hedge position is open right now, so the protocol currently runs as a fully USDC-reserved dollar while the delta-neutral book is seeded through Genesis. Stake **kUSD** into **skUSD** to receive the protocol's realized yield as the book distributes it. The published APY is a live model at target leverage, computed from the trailing Hyperliquid funding mean plus the Lido staking SMA with explicit deductions for strategy cost, dynamic insurance allocation, and protocol phase fee; it is not a record of realized distributions, and realized yield to date is small. Genesis phase: 0% performance fee while TVL is below $100k.
 
-Every number Kerne publishes about itself is reproducible from public RPCs and public endpoints, with no Kerne-controlled infrastructure in the trust path. See [Verify Kerne yourself](#verify-kerne-yourself).
+The backing is checkable without trusting Kerne. A public Base node, which Kerne does not operate, is enough to re-derive how much USDC sits across the PSMs and how much kUSD is outstanding, and Kerne's signed Proof of Reserves is then checked against that same chain state at the block the attestation names. Figures that depend on off-chain state, the Hyperliquid hedge and the modeled APY among them, cannot be reconstructed that way, and they say so where they appear. See [Verify Kerne yourself](#verify-kerne-yourself).
 
 **Disambiguation:** Kerne kUSD on Base is a different protocol from KernelDAO's KUSD on BNB Chain. Different teams, different chains. See [kerne.fi/not-kerneldao](https://kerne.fi/not-kerneldao).
 
@@ -40,11 +40,13 @@ The full address registry is in [`contracts-public/deployments/8453.json`](https
 
 ## Verify Kerne yourself
 
-A single command checks every public claim Kerne makes about its own state, against live RPCs and live HTTPS endpoints, with no authentication:
+A single command checks Kerne's public endpoints, then re-derives the backing from Base through a public node Kerne does not operate and holds Kerne's own signed Proof of Reserves against it. No authentication, no API key, no account:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/kerne-protocol/contracts-public/main/scripts/verify_public_endpoints.sh | bash
 ```
+
+It exits 0 when every check passed, 1 on a mismatch, and 3 when no public RPC endpoint answered so the on-chain half could not run. That last code is deliberately not a failure: a blocked or rate-limited node at your end is not evidence about Kerne, and the script will not dress it up as though it were. A mismatch prints both numbers, ours and the chain's. Set `BASE_RPC` to your own node and no part of the check runs on infrastructure we picked either.
 
 Prefer not to pipe the internet to bash? Read the script first, or follow the full hostile-reader walkthrough (every claim cross-checked with `cast call`) in [`contracts-public/HOW_TO_VERIFY_KERNE.md`](https://github.com/kerne-protocol/contracts-public/blob/main/HOW_TO_VERIFY_KERNE.md).
 
