@@ -1,10 +1,18 @@
 # Kerne Protocol
 
-Delta-neutral synthetic dollar on Base. USDC mints **kUSD** through the [PSM](https://app.kerne.fi/api/psm-status), and every kUSD is backed 1:1 by USDC reserves anyone can recompute from chain; backing is [live and verifiable](https://kerne.fi/api/por) and sits near 100% today. The design pairs the collateral with a short perpetual hedge on Hyperliquid; that hedge engine is built and wired, but no hedge position is open right now, so the protocol currently runs as a fully USDC-reserved dollar while the delta-neutral book is seeded through Genesis. Stake **kUSD** into **skUSD** to receive the protocol's realized yield as the book distributes it. The published APY is a live model at target leverage, computed from the trailing Hyperliquid funding mean plus the Lido staking SMA with explicit deductions for strategy cost, dynamic insurance allocation, and protocol phase fee; it is not a record of realized distributions, and realized yield to date is small. Genesis phase: 0% performance fee while TVL is below $100k.
+Delta-neutral synthetic dollar on Base. USDC mints **kUSD** through the [PSM](https://basescan.org/address/0xaBDE1138aa1Ce88d1dF06422C0c3b05D70569803), and every kUSD is backed 1:1 by USDC reserves anyone can recompute from chain; backing is [live and verifiable](https://kerne.fi/api/por) and sits near 100% today. The design pairs the collateral with a short perpetual hedge on Hyperliquid; that hedge engine is built and wired, but no hedge position is open right now, so the protocol currently runs as a fully USDC-reserved dollar while the delta-neutral book is seeded through Genesis. Stake **kUSD** into **skUSD** to receive the protocol's realized yield as the book distributes it. The published APY is a live model at target leverage, computed from the trailing Hyperliquid funding mean plus the Lido staking SMA with explicit deductions for strategy cost, dynamic insurance allocation, and protocol phase fee; it is not a record of realized distributions, and realized yield to date is small. Genesis phase: 0% performance fee while TVL is below $100k.
 
 The backing is checkable without trusting Kerne. A public Base node, which Kerne does not operate, is enough to re-derive how much USDC sits across the PSMs and how much kUSD is outstanding, and Kerne's signed Proof of Reserves is then checked against that same chain state at the block the attestation names. Figures that depend on off-chain state, the Hyperliquid hedge and the modeled APY among them, cannot be reconstructed that way, and they say so where they appear. See [Verify Kerne yourself](#verify-kerne-yourself).
 
 **Disambiguation:** Kerne kUSD on Base is a different protocol from KernelDAO's KUSD on BNB Chain. Different teams, different chains. See [kerne.fi/not-kerneldao](https://kerne.fi/not-kerneldao).
+
+## November 2026
+
+Built this month for Base's Stocks Maxxing season. None of it is audited.
+
+- **Option vaults for Coinbase tokenized stocks**, source and tests in [`contracts-public/stocks`](https://github.com/kerne-protocol/contracts-public/tree/main/stocks). `KerneCoveredCallVault` was deployed on Base on 2026-11-12 at [`0xc6180E9af7Cb4c6D47A230a6c5047fA615Bd0956`](https://basescan.org/address/0xc6180E9af7Cb4c6D47A230a6c5047fA615Bd0956) and deliberately left closed (deposit cap 0). `KerneCashSecuredPutVault`, the put side of the same desk, is source and tests only, not deployed as of 2026-11-13. Each folder has its own CI workflow.
+- **[stock-quote-agent](https://github.com/kerne-protocol/stock-quote-agent)**: a Cloudflare Worker that signs a reference covered-call quote for TSLAc every 15 minutes and publishes every input it used, with an independent Python verifier. Nothing executes from a quote. Coinbase tokenized stocks are not available to US persons, and nothing here is offered to them.
+- **What stopped working, stated here rather than left for you to find:** the endpoints marked offline in the table below answered HTTP 503 when checked on 2026-11-13. The daily check in realized-apy failed 31 runs in a row for the same reason and is paused; the record stays in its [closed issue #1](https://github.com/kerne-protocol/realized-apy/issues/1). Proof of Reserves at [kerne.fi/api/por](https://kerne.fi/api/por) still answers.
 
 ## Live surface
 
@@ -13,10 +21,10 @@ The backing is checkable without trusting Kerne. A public Base node, which Kerne
 | Marketing site | [kerne.fi](https://kerne.fi) |
 | Terminal / dApp | [app.kerne.fi](https://app.kerne.fi) |
 | Docs | [kerne.fi/docs](https://kerne.fi/docs) |
-| Live APY (with methodology) | [kerne.fi/api/apy](https://kerne.fi/api/apy) |
+| Live APY (with methodology) | [kerne.fi/api/apy](https://kerne.fi/api/apy) (offline: HTTP 503 on 2026-11-13) |
 | Proof of Reserves | [kerne.fi/api/por](https://kerne.fi/api/por) |
-| Risk triggers / exit policy | [kerne.fi/api/risk-status](https://kerne.fi/api/risk-status) |
-| PSM mint readiness | [app.kerne.fi/api/psm-status](https://app.kerne.fi/api/psm-status) |
+| Risk triggers / exit policy | [kerne.fi/api/risk-status](https://kerne.fi/api/risk-status) (offline: HTTP 503 on 2026-11-13) |
+| PSM mint readiness | [app.kerne.fi/api/psm-status](https://app.kerne.fi/api/psm-status) (offline: HTTP 503 on 2026-11-13) |
 | Bug bounty | [kerne.fi/security](https://kerne.fi/security) |
 | security.txt (RFC 9116) | [kerne.fi/.well-known/security.txt](https://kerne.fi/.well-known/security.txt) |
 | OP Atlas project registry | https://atlas.optimism.io/project/0x8f7746724eb8314f2fcbeb9367dabc25dd159cb1dddecac5f7d61bc67a708113 |
@@ -56,7 +64,7 @@ Three standalone repositories. No dependencies, no API key, no account anywhere.
 
 | Repository | What it does |
 |---|---|
-| [**realized-apy**](https://github.com/kerne-protocol/realized-apy) | Re-derives every row of the [Kerne Honesty Index](https://kerne.fi/honesty-index) from public archive RPC, at the block heights the signed snapshot names, and tells you row by row whether the published number holds. It is a **second implementation**: it shares no code with the engine that writes the board, and it verifies the snapshot signature with keccak256 and secp256k1 written from scratch rather than with a library. It also measures any ERC-4626 dollar vault Kerne has never heard of. Method, tolerances and the standing commitment if you get a different answer: [kerne.fi/honesty-index/reproduce](https://kerne.fi/honesty-index/reproduce). |
+| [**realized-apy**](https://github.com/kerne-protocol/realized-apy) | Re-derives every row of the [Kerne Honesty Index](https://kerne.fi/honesty-index) from public archive RPC, at the block heights the signed snapshot names, and tells you row by row whether the published number holds. It is a **second implementation**: it shares no code with the engine that writes the board, and it verifies the snapshot signature with keccak256 and secp256k1 written from scratch rather than with a library. It also measures any ERC-4626 dollar vault Kerne has never heard of. Method, tolerances and the standing commitment if you get a different answer: [kerne.fi/honesty-index/reproduce](https://kerne.fi/honesty-index/reproduce). **Paused since 2026-11-13:** the signed snapshot it checks is not being served (HTTP 503), so `check` with no options stops with that error; see the status note at the top of its README. |
 | [**solhonesty**](https://github.com/kerne-protocol/solhonesty) | The same question asked on Solana, across Kamino, Jupiter Lend and Save, published as a [CC BY 4.0 dataset](https://huggingface.co/datasets/kerne-protocol/solana-yield-honesty) and rendered at [kerne.fi/solana-honesty](https://kerne.fi/solana-honesty). Kerne is deliberately **absent** from that board, because the board is Solana and Kerne is on Base, so any Kerne row there would be invented. |
 | [**signed-por**](https://github.com/kerne-protocol/signed-por) | A vendor-neutral verifier for Signed Proof-of-Reserves attestations: EIP-191 recovery, canonical number binding, freshness with a future-skew bound. Kerne is reference deployment number one rather than the subject, and the [spec](https://github.com/kerne-protocol/signed-por/blob/main/SPEC.md) is written so anyone else can be number two. |
 
@@ -87,7 +95,7 @@ Every protocol on the Honesty Index, including the ones the board is least flatt
 
 Kerne is built by three co-founders, and most of the code is written with AI under our direction. Commit trailers record part of that history rather than all of it: 14 of the 82 commits across Kerne's public repositories carry a co-authorship trailer (measured 2026-08-13). The convention started partway through and nothing enforces it, so read the trailers as a sample rather than a census. We are stating it here because a fact like this should come from us rather than turn up later as something a reader discovered on their own.
 
-Code written this way earns more outside scrutiny, not less, and that is the reason the rest of this page looks the way it does. The contracts went to Hexens for a paid external audit on the terms and with the limits set out above. A public bug bounty runs at [kerne.fi/security](https://kerne.fi/security), hosted by us rather than on a third-party platform. Reserves are signed hourly, risk triggers are published as a live feed, every contract has a verification status you can check against BaseScan and Sourcify yourself, and every place the deployed bytecode differs from its source is written down. All of that reads off public RPCs and public endpoints, so none of it asks you to take a view on who or what wrote the code.
+Code written this way earns more outside scrutiny, not less, and that is the reason the rest of this page looks the way it does. The contracts went to Hexens for a paid external audit on the terms and with the limits set out above. A public bug bounty runs at [kerne.fi/security](https://kerne.fi/security), hosted by us rather than on a third-party platform. Reserves are signed hourly, every contract has a verification status you can check against BaseScan and Sourcify yourself, and every place the deployed bytecode differs from its source is written down. All of that reads off public RPCs and public endpoints, so none of it asks you to take a view on who or what wrote the code.
 
 ## Community
 
